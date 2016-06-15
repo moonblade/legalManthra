@@ -62,18 +62,13 @@ app.use(function(err, req, res, next) {
 
 var elastic = require('./elasticsearch');
 elastic.indexExists("case").then(function(exists) {
-    if (exists) {
-        return elastic.deleteIndex("case");
+    console.log(exists)
+    if (!exists) {
+        console.log("here");
+        return elastic.initIndex("case").then(function() {
+            elastic.initMapping("case")
+        });
     }
-}).then(function() {
-    return elastic.initIndex("case").then(elastic.initMapping("case")).then(function() {
-        var all = require('../cchtaxonline_sample.json');
-        console.log(all.length)
-        // all.map(function(tcase) {
-            // return elastic.addCase(tcase);
-        // });
-        // return Promise.all(all);
-    });
 });
 
 
