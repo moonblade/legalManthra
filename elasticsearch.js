@@ -10,7 +10,7 @@ var indexName = "randomindex";
 /**
 * Delete an existing index
 */
-function deleteIndex() {
+function deleteIndex(indexName) {
     return elasticClient.indices.delete({
         index: indexName
     });
@@ -20,7 +20,7 @@ exports.deleteIndex = deleteIndex;
 /**
 * create the index
 */
-function initIndex() {
+function initIndex(indexName) {
     return elasticClient.indices.create({
         index: indexName
     });
@@ -30,21 +30,28 @@ exports.initIndex = initIndex;
 /**
 * check if the index exists
 */
-function indexExists() {
+function indexExists(indexName) {
     return elasticClient.indices.exists({
         index: indexName
     });
 }
 exports.indexExists = indexExists;
 
-function initMapping() {
+function initMapping(indexName) {
     return elasticClient.indices.putMapping({
         index: indexName,
-        type: "document",
+        type: "case",
         body: {
             properties: {
-                title: { type: "string" },
-                content: { type: "string" },
+                longDescription: {type: "string"},
+                dateOfDecision: {type: "string"},
+                courtName: {type: "string"},
+                caseHTML: {type: "string"},
+                caseText:{type: "string"},
+                description:{type: "string"},
+                id: {type: "string"},
+                shortDescription: {type: "string"},
+                title: {type: "string"},
                 suggest: {
                     type: "completion",
                     analyzer: "simple",
@@ -57,27 +64,37 @@ function initMapping() {
 }
 exports.initMapping = initMapping;
 
-function addDocument(document) {
+function addCase(tcase,indexName) {
     return elasticClient.index({
         index: indexName,
-        type: "document",
+        type: "case",
         body: {
-            title: document.title,
-            content: document.content,
+            longDescription: tcase.longDescription,
+            dateOfDecision: tcase.dateOfDecision,
+            courtName: tcase.courtName,
+            caseHTML: tcase.caseHTML,
+            caseText:tcase.caseText,
+            description:tcase.description,
+            id: tcase.id,
+            shortDescription: tcase.shortDescription,
+            title: tcase.title,
             suggest: {
-                input: document.title.split(" "),
-                output: document.title,
-                payload: document.metadata || {}
+                input: tcase.title.split(" "),
+                output: tcase.title,
+                payload: { 
+                    "courtName" : tcase.courtName,
+                    "dateOfDecision" : tcase.dateOfDecision
+                }
             }
         }
     });
 }
-exports.addDocument = addDocument;
+exports.addCase = addCase;
 
-function getSuggestions(input) {
+function getSuggestions(input,indexName) {
     return elasticClient.suggest({
         index: indexName,
-        type: "document",
+        type: "case",
         body: {
             docsuggest: {
                 text: input,
