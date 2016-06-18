@@ -1,16 +1,17 @@
 var elasticsearch = require('elasticsearch');
+require('datejs');
 
 var elasticClient = new elasticsearch.Client({
     host: 'localhost:9200',
     log: 'info'
 });
-
-var indexName = "randomindex";
+var indexName = "legal_manthra";
+var caseType = "case";
 
 /**
-* Delete an existing index
-*/
-function deleteIndex(indexName) {
+ * Delete an existing index
+ */
+function deleteIndex() {
     return elasticClient.indices.delete({
         index: indexName
     });
@@ -18,9 +19,9 @@ function deleteIndex(indexName) {
 exports.deleteIndex = deleteIndex;
 
 /**
-* create the index
-*/
-function initIndex(indexName) {
+ * create the index
+ */
+function initIndex() {
     return elasticClient.indices.create({
         index: indexName
     });
@@ -28,30 +29,49 @@ function initIndex(indexName) {
 exports.initIndex = initIndex;
 
 /**
-* check if the index exists
-*/
-function indexExists(indexName) {
+ * check if the index exists
+ */
+function indexExists() {
     return elasticClient.indices.exists({
         index: indexName
     });
 }
 exports.indexExists = indexExists;
 
-function initMapping(indexName) {
+function initMapping() {
     return elasticClient.indices.putMapping({
         index: indexName,
-        type: "case",
+        type: caseType,
         body: {
             properties: {
-                longDescription: {type: "string"},
-                dateOfDecision: {type: "string"},
-                courtName: {type: "string"},
-                caseHTML: {type: "string"},
-                caseText:{type: "string"},
-                description:{type: "string"},
-                id: {type: "string"},
-                shortDescription: {type: "string"},
-                title: {type: "string"},
+                longDescription: {
+                    type: "string",
+                    analyzer: "english"
+                },
+                dateOfDecision: {
+                    type: "date"
+                },
+                courtName: {
+                    type: "string"
+                },
+                caseHTML: {
+                    type: "string"
+                },
+                caseText: {
+                    type: "string"
+                },
+                description: {
+                    type: "string"
+                },
+                id: {
+                    type: "string"
+                },
+                shortDescription: {
+                    type: "string"
+                },
+                title: {
+                    type: "string"
+                },
                 suggest: {
                     type: "completion",
                     analyzer: "simple",
@@ -64,26 +84,29 @@ function initMapping(indexName) {
 }
 exports.initMapping = initMapping;
 
-function addCase(tcase,indexName) {
+function addCase(tcase) {
+    tcase.dateOfDecision = Date.parse(tcase.dateOfDecision)
     return elasticClient.index({
         index: indexName,
-        type: "case",
+        type: caseType,
+        id: tcase.id,
         body: {
             longDescription: tcase.longDescription,
             dateOfDecision: tcase.dateOfDecision,
             courtName: tcase.courtName,
             caseHTML: tcase.caseHTML,
-            caseText:tcase.caseText,
-            description:tcase.description,
+            caseText: tcase.caseText,
+            description: tcase.description,
             id: tcase.id,
             shortDescription: tcase.shortDescription,
             title: tcase.title,
             suggest: {
                 input: tcase.title.split(" "),
                 output: tcase.title,
-                payload: { 
-                    "courtName" : tcase.courtName,
-                    "dateOfDecision" : tcase.dateOfDecision
+                payload: {
+                    "courtName": tcase.courtName,
+                    "dateOfDecision": tcase.dateOfDecision,
+                    "id": tcase.id
                 }
             }
         }
@@ -91,10 +114,18 @@ function addCase(tcase,indexName) {
 }
 exports.addCase = addCase;
 
-function getSuggestions(input,indexName) {
+exports.getCase = function getCase(id, callback) {
+    return elasticClient.search({
+        index: indexName,
+        type: caseType,
+        id: id
+    }, callback)
+}
+
+function getSuggestions(input) {
     return elasticClient.suggest({
         index: indexName,
-        type: "case",
+        type: caseType,
         body: {
             docsuggest: {
                 text: input,

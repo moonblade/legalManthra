@@ -61,15 +61,17 @@ app.use(function(err, req, res, next) {
 });
 
 var elastic = require('./elasticsearch');
-elastic.indexExists("case").then(function(exists) {
-    console.log(exists)
-    if (!exists) {
-        console.log("here");
-        return elastic.initIndex("case").then(function() {
-            elastic.initMapping("case")
-        });
-    }
-});
+caseIndex = "case";
+var init = function(index) {
+    elastic.indexExists(index).then(function(exists) {
+        if (!exists) {
+            return elastic.initIndex(index).then(function() {
+                elastic.initMapping(index)
+            });
+        }
+    });
+}
+init(caseIndex);
 
 
 module.exports = app;

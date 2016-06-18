@@ -2,13 +2,23 @@ var express = require('express');
 var router = express.Router();
 
 var elastic = require('../elasticsearch');
-var indexName = "case";
+var indexName = "legal_manthra";
 /* GET suggestions */
-router.get('/suggest/:input', function(req, res, next) {
-    elastic.getSuggestions(req.params.input, indexName).then(function(result) {
+router.get('/:input', function(req, res, next) {
+    elastic.getSuggestions(req.params.input).then(function(result) {
+        console.log(result)
         res.json(result)
     });
 });
+
+router.get('/display/:id', function(req, res, next) {
+    var callback = function(err, result) {
+        if (!err) {
+            res.json(result)
+        }
+    }
+    elastic.getCase(req.params.id, callback)
+})
 
 /* POST document to be indexed */
 router.post('/', function(req, res, next) {
@@ -19,8 +29,8 @@ router.post('/', function(req, res, next) {
     counter = 0;
     req.body.forEach(function(tcase) {
         counter++;
-        elastic.indexExists(indexName).then(function(exists) {
-            elastic.addCase(tcase, indexName).then(function(result) {
+        elastic.indexExists().then(function(exists) {
+            elastic.addCase(tcase).then(function(result) {
                 toReturn.push(result);
                 if (counter == req.body.length) {
                     retFunction();
