@@ -122,19 +122,12 @@ exports.getCase = function getCase(id, callback) {
     }, callback)
 }
 
-function getSuggestions(input) {
-    return elasticClient.suggest({
-        index: indexName,
-        type: caseType,
-        body: {
-            docsuggest: {
-                text: input,
-                completion: {
-                    field: "suggest",
-                    fuzzy: true
-                }
-            }
-        }
-    })
+exports.getSuggestions = function get(input,callback) {
+    return elasticClient.search({
+        index:indexName,
+        type:caseType,
+        analyzer: "english",
+        analyzeWildCard: "true",
+        q:"longDescription:"+input
+    },callback)
 }
-exports.getSuggestions = getSuggestions;
