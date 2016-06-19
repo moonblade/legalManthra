@@ -52,25 +52,31 @@ function initMapping() {
                     type: "date"
                 },
                 courtName: {
-                    type: "string"
+                    type: "string",
+                    analyzer: "english"
                 },
                 caseHTML: {
-                    type: "string"
+                    type: "string",
+                    analyzer: "english"
                 },
                 caseText: {
-                    type: "string"
+                    type: "string",
+                    analyzer: "english"
                 },
                 description: {
-                    type: "string"
+                    type: "string",
+                    analyzer: "english"
                 },
                 id: {
                     type: "string"
                 },
                 shortDescription: {
-                    type: "string"
+                    type: "string",
+                    analyzer: "english"
                 },
                 title: {
-                    type: "string"
+                    type: "string",
+                    analyzer: "english"
                 },
                 suggest: {
                     type: "completion",
@@ -122,12 +128,60 @@ exports.getCase = function getCase(id, callback) {
     }, callback)
 }
 
-exports.getSuggestions = function get(input,callback) {
+exports.getSuggestions = function get(input, callback) {
     return elasticClient.search({
-        index:indexName,
-        type:caseType,
+        index: indexName,
+        type: caseType,
         analyzer: "english",
         analyzeWildCard: "true",
-        q:"longDescription:"+input
-    },callback)
+        body: {
+            query: {
+                bool: {
+                    should: [{
+                            match: {
+                                longDescription:{
+                                    query: input,
+                                    boost:5
+                                }
+                            }
+                        }, {
+                            match: {
+                                description: input
+                            }
+                        }, {
+                            match: {
+                                shortDescription: input
+                            }
+                        }, {
+                            match: {
+                                caseHTML:{
+                                    query: input,
+                                    boost:5
+                                }
+                            }
+                        }, {
+                            match: {
+                                caseText:{
+                                    query: input,
+                                    boost:5
+                                }
+                            }
+                        }, {
+                            match: {
+                                title:{
+                                    query: input,
+                                    boost:10
+                                }
+                            }
+                        }, {
+                            match: {
+                                courtName: input
+                            }
+                        },
+
+                    ]
+                }
+            }
+        }
+    }, callback)
 }
