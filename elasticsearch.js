@@ -136,8 +136,8 @@ exports.getSuggestions = function get(input, callback) {
         analyzeWildCard: "true",
         body: {
             query: {
-                bool: {
-                    should: [{
+                dis_max: {
+                    queries: [{
                             match: {
                                 longDescription:{
                                     query: input,
@@ -179,7 +179,8 @@ exports.getSuggestions = function get(input, callback) {
                             }
                         },
 
-                    ]
+                    ],
+                    tie_breaker:0.4
                 }
             }
         }
