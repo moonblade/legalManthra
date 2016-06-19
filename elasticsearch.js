@@ -147,6 +147,7 @@ exports.getSuggestions = function get(input, callback) {
                         "*_title^10",
                         "courtName",
                     ],
+                    "fuzziness":"AUTO",
                     "tie_breaker": 0.4, //to 1 for bool
                 }
             }
