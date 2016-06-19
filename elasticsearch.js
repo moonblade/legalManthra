@@ -136,51 +136,18 @@ exports.getSuggestions = function get(input, callback) {
         analyzeWildCard: "true",
         body: {
             query: {
-                dis_max: {
-                    queries: [{
-                            match: {
-                                longDescription:{
-                                    query: input,
-                                    boost:5
-                                }
-                            }
-                        }, {
-                            match: {
-                                description: input
-                            }
-                        }, {
-                            match: {
-                                shortDescription: input
-                            }
-                        }, {
-                            match: {
-                                caseHTML:{
-                                    query: input,
-                                    boost:5
-                                }
-                            }
-                        }, {
-                            match: {
-                                caseText:{
-                                    query: input,
-                                    boost:5
-                                }
-                            }
-                        }, {
-                            match: {
-                                title:{
-                                    query: input,
-                                    boost:10
-                                }
-                            }
-                        }, {
-                            match: {
-                                courtName: input
-                            }
-                        },
-
+                multi_match: {
+                    "query": input,
+                    "type": "best_fields", //or most_fields for bool
+                    "fields": ["longDescription^5",
+                        "description",
+                        "shortDescription",
+                        "caseHTML^5",
+                        "caseText^5",
+                        "*_title^10",
+                        "courtName",
                     ],
-                    tie_breaker:0.4
+                    "tie_breaker": 0.4, //to 1 for bool
                 }
             }
         }
