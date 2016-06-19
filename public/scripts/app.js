@@ -1,5 +1,5 @@
 // You must include the dependency on 'ngMaterial'
-angular.module('BlankApp', ['ngMaterial', 'ui.router'])
+angular.module('LegalManthra', ['ngMaterial', 'ui.router'])
 
 
 .config(function($stateProvider, $urlRouterProvider) {

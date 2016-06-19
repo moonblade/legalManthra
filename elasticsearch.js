@@ -128,7 +128,7 @@ exports.getCase = function getCase(id, callback) {
     }, callback)
 }
 
-exports.getSuggestions = function get(input, callback) {
+exports.search = function get(input, callback) {
     return elasticClient.search({
         index: indexName,
         type: caseType,

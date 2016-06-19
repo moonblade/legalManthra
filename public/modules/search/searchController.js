@@ -1,4 +1,4 @@
-angular.module('BlankApp')
+angular.module('LegalManthra')
 
 .controller('SearchController', function($scope) {
 
