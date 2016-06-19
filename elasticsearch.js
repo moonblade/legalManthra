@@ -128,6 +128,22 @@ exports.getCase = function getCase(id, callback) {
     }, callback)
 }
 
+exports.getSuggestions = function(input,callback) {
+    return elasticClient.suggest({
+        index: indexName,
+        type: caseType,
+        body: {
+            docsuggest: {
+                text: input,
+                completion: {
+                    field: "suggest",
+                    fuzzy: "AUTO"
+                }
+            }
+        }
+    })
+}
+
 exports.search = function get(input, callback) {
     return elasticClient.search({
         index: indexName,

@@ -3,13 +3,21 @@ var router = express.Router();
 
 var elastic = require('../elasticsearch');
 var indexName = "legal_manthra";
-/* GET suggestions */
 router.get('/:input', function(req, res, next) {
-    elastic.getSuggestions(req.params.input).then(function(result) {
+    elastic.search(req.params.input).then(function(result) {
         console.log(result)
         res.json(result)
     });
 });
+
+router.get('/suggest/:input', function(req,res,next) {
+    var callback = function(err,result) {
+        if(!err) {
+            res.json(result);
+        }
+    }
+    elastic.getSuggestions(req.params.input,callback)
+})
 
 router.get('/display/:id', function(req, res, next) {
     var callback = function(err, result) {
