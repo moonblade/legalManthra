@@ -10,7 +10,7 @@ router.get('/:input', function(req, res, next) {
     });
 });
 
-router.get('/suggest/:input', function(req,res,next) {
+router.get('/getSuggestions/:input', function(req,res,next) {
     var callback = function(err,result) {
         if(!err) {
             res.json(result);
