@@ -14,7 +14,6 @@ var app = express();
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(cors())
-// app.options('*', cors());
 app.use(logger('dev'));
 app.use(bodyParser.raw({ limit: '500mb' }));
 app.use(bodyParser.json());

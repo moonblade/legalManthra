@@ -121,7 +121,7 @@ function addCase(tcase) {
 exports.addCase = addCase;
 
 exports.getCase = function getCase(id, callback) {
-    return elasticClient.search({
+    return elasticClient.get({
         index: indexName,
         type: caseType,
         id: id
@@ -133,11 +133,11 @@ exports.getSuggestions = function(input,callback) {
         index: indexName,
         type: caseType,
         body: {
-            docsuggest: {
+            suggest: {
                 text: input,
                 completion: {
                     field: "suggest",
-                    fuzzy: "AUTO"
+                    fuzzy: true
                 }
             }
         }
