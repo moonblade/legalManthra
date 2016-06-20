@@ -15,7 +15,7 @@ var app = express();
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(cors())
 app.use(logger('dev'));
-app.use(bodyParser.raw({ limit: '500mb' }));
+app.use(bodyParser({ limit: '500mb' }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: false
