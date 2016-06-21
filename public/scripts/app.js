@@ -1,5 +1,6 @@
 // You must include the dependency on 'ngMaterial'
-var serverUrl = "http://localhost:3000/"
+var serverUrl = "http://63.141.232.148:3000/"
+// var serverUrl = "http://localhost:3000/"
 var cases = "cases/"
 angular.module('LegalManthra', ['ngMaterial', 'ui.router'])
     .config(function($stateProvider, $urlRouterProvider) {
@@ -14,8 +15,12 @@ angular.module('LegalManthra', ['ngMaterial', 'ui.router'])
             })
             .state('detail',{
             	url:'/detail/:id',
-            	templateUrl: 'modules/detail/detail.html',
-            	controller: 'detailController'
+                templateUrl: 'modules/detail/detail.html',
+                controller: 'detailController'
             })
-
+            .state('input',{
+                url:'/input',
+                templateUrl: 'modules/input/input.html',
+            	controller: 'inputController'
+            })
     });
