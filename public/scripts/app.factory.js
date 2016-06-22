@@ -13,8 +13,18 @@ angular.module('LegalManthra')
         }
 
         factory.getById = function(id){
-        	console.log(caseUrl+'display/'+id)
-        	return $http.get(caseUrl+'display/'+id);
+            console.log(caseUrl+'display/'+id)
+            return $http.get(caseUrl+'display/'+id);
+        }
+
+        factory.upload = function(data){
+        	console.log(caseUrl)
+            return $http({
+                "url":caseUrl,
+                "method":"POST",
+                "data":data
+            })
+            
         }
         return factory;
     });

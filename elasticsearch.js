@@ -2,15 +2,18 @@ var elasticsearch = require('elasticsearch');
 var shortId = require('shortid');
 require('datejs');
 
-var elasticClient = new elasticsearch.Client({
-    host: [{
-        host: 'localhost',
-        auth: 'moonblade1:moonblade1'
-    }],
-    log: 'info'
-});
 var indexName = "legal_manthra";
 var caseType = "case";
+var elasticClient;
+exports.init = function(user, pass) {
+    elasticClient = new elasticsearch.Client({
+        host: [{
+            host: 'localhost',
+            auth: user+':'+pass
+        }],
+        log: 'info'
+    });
+}
 
 /**
  * Delete an existing index
@@ -48,6 +51,10 @@ function initMapping() {
         type: caseType,
         body: {
             properties: {
+                type: {
+                    type: "string",
+                    analyzer: "english"
+                },
                 longDescription: {
                     type: "string",
                     analyzer: "english"
@@ -94,15 +101,18 @@ function initMapping() {
 }
 exports.initMapping = initMapping;
 
-function addCase(tcase) {
-    if(!tcase.id)
+function addCase(type, commonField, tcase) {
+    if (!tcase.id)
         tcase.id = shortId.generate();
+    if (commonField)
+        tcase.type = commonField
     tcase.dateOfDecision = Date.parse(tcase.dateOfDecision)
     return elasticClient.index({
         index: indexName,
-        type: caseType,
+        type: type,
         id: tcase.id,
         body: {
+            type: tcase.type,
             longDescription: tcase.longDescription,
             dateOfDecision: tcase.dateOfDecision,
             courtName: tcase.courtName,
@@ -168,9 +178,10 @@ exports.search = function get(input, callback) {
                         "caseText^5",
                         "*_title^10",
                         "courtName",
+                        "type^4"
                     ],
                     "fuzziness": "AUTO",
-                    "tie_breaker": 0.4, //to 1 for bool
+                    "tie_breaker": 0.3, //to 1 for bool
                 }
             }
         }
