@@ -43,7 +43,9 @@ router.post('/', function(req, res, next) {
     var postData = JSON.parse(req.body.postData)
     elastic.indexExists().then(function(exists) {
         counter = 0;
+        console.log(counter)
         postData.forEach(function(tcase) {
+            console.log(counter)
             counter++;
             elastic.addCase(type, commonField, tcase).then(function(result) {
                 toReturn.push(result);

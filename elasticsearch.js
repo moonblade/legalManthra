@@ -123,7 +123,7 @@ function addCase(type, commonField, tcase) {
             shortDescription: tcase.shortDescription,
             title: tcase.title,
             suggest: {
-                input: tcase.title.split(" "),
+                input: tcase.title?tcase.title.split(" "):[],
                 output: tcase.title,
                 payload: {
                     "courtName": tcase.courtName,
