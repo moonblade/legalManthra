@@ -19,12 +19,12 @@ angular.module('LegalManthra')
                         .ok('Okay')
                     );
                 }).error(function(err) {
-                    console.log(data);
+                    console.log(err);
                     $mdDialog.show(
                         $mdDialog.alert()
                         .clickOutsideToClose(true)
                         .title('Failed')
-                        .textContent('There was an error during upload : ' + err)
+                        .textContent('There was an error during upload : ' + err.message)
                         .ok('Okay')
                     );
 
