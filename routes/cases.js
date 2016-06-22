@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-
 var elastic = require('../elasticsearch');
 var indexName = "legal_manthra";
 router.get('/:input', function(req, res, next) {

@@ -1,8 +1,12 @@
 var elasticsearch = require('elasticsearch');
+var shortId = require('shortid');
 require('datejs');
 
 var elasticClient = new elasticsearch.Client({
-    host: 'localhost:9200',
+    host: [{
+        host: 'localhost',
+        auth: 'moonblade1:moonblade1'
+    }],
     log: 'info'
 });
 var indexName = "legal_manthra";
@@ -91,6 +95,8 @@ function initMapping() {
 exports.initMapping = initMapping;
 
 function addCase(tcase) {
+    if(!tcase.id)
+        tcase.id = shortId.generate();
     tcase.dateOfDecision = Date.parse(tcase.dateOfDecision)
     return elasticClient.index({
         index: indexName,
@@ -128,7 +134,7 @@ exports.getCase = function getCase(id, callback) {
     }, callback)
 }
 
-exports.getSuggestions = function(input,callback) {
+exports.getSuggestions = function(input, callback) {
     return elasticClient.suggest({
         index: indexName,
         type: caseType,
@@ -163,7 +169,7 @@ exports.search = function get(input, callback) {
                         "*_title^10",
                         "courtName",
                     ],
-                    "fuzziness":"AUTO",
+                    "fuzziness": "AUTO",
                     "tie_breaker": 0.4, //to 1 for bool
                 }
             }
