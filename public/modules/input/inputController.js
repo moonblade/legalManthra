@@ -17,16 +17,17 @@ angular.module('LegalManthra')
                         .title('Success')
                         .textContent('The data has been uploaded successfully')
                         .ok('Okay')
-                }).error(function(err){
+                    );
+                }).error(function(err) {
                     console.log(data);
                     $mdDialog.show(
                         $mdDialog.alert()
                         .clickOutsideToClose(true)
                         .title('Failed')
-                        .textContent('There was an error during upload : '+err)
+                        .textContent('There was an error during upload : ' + err)
                         .ok('Okay')
                     );
-                	
+
                 });
         }
     })
