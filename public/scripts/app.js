@@ -1,4 +1,3 @@
-// You must include the dependency on 'ngMaterial'
 var serverUrl = "http://63.141.232.148:3000/"
 // var serverUrl = "http://localhost:3000/"
 var cases = "cases/"
