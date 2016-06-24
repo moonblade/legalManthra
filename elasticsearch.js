@@ -105,48 +105,11 @@ function initMapping() {
 }
 exports.initMapping = initMapping;
 
-function addCase(type, commonField, tcase, callback) {
-    if (!tcase.id)
-        tcase.id = shortId.generate();
-    if (commonField)
-        tcase.type = commonField
-    tcase.dateOfDecision = Date.parse(tcase.dateOfDecision)
-    elasticClient.index({
-        index: indexName,
-        type: type,
-        id: tcase.id,
-        body: {
-            type: tcase.type,
-            longDescription: tcase.longDescription,
-            dateOfDecision: tcase.dateOfDecision,
-            courtName: tcase.courtName,
-            caseHTML: tcase.caseHTML,
-            caseText: tcase.caseText,
-            description: tcase.description,
-            id: tcase.id,
-            shortDescription: tcase.shortDescription,
-            title: tcase.title,
-            suggest: {
-                input: tcase.title ? tcase.title.split(" ") : [],
-                output: tcase.title,
-                payload: {
-                    "courtName": tcase.courtName,
-                    "dateOfDecision": tcase.dateOfDecision,
-                    "id": tcase.id
-                }
-            }
-        }
-    }, function(error, response) {
-        if (error) {
-            console.log(error)
-            callback(error);
-        } else
-            callback(response);
-    }).catch(function(e) {
-        console.log(e)
+exports.addCaseBulk = function(bulkBody) {
+    return elasticClient.bulk({
+        body:bulkBody
     });
 }
-exports.addCase = addCase;
 
 exports.getCase = function getCase(id, callback) {
     return elasticClient.get({

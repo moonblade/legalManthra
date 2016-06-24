@@ -11,10 +11,16 @@
                         </md-option>
                     </md-select>
                 </md-input-container>
-                <md-input-container>
-                    <label>Type field common to all documents</label>
-                    <input ng-model="type">
-                </md-input-container>
+                <div layout="row" flex>
+                    <md-input-container flex>
+                        <label>Common field name</label>
+                        <input ng-model="commonField.name">
+                    </md-input-container>
+                    <md-input-container flex>
+                        <label>Common field value</label>
+                        <input ng-model="commonField.value">
+                    </md-input-container>
+                </div>
                 <md-input-container>
                     <label>{{selected}} Data, json array of {{selected}}s</label>
                     <textarea ng-model="postData" required rows="20"></textarea>

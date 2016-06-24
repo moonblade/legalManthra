@@ -21,7 +21,7 @@ angular.module('LegalManthra')
         	console.log(caseUrl)
             return $http({
                 "url":caseUrl,
-                "method":"POST",
+                "method":"PUT",
                 "data":data
             })
             

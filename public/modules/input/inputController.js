@@ -2,10 +2,11 @@ angular.module('LegalManthra')
     .controller('inputController', function($scope, mainFactory, $mdDialog) {
         $scope.inputTypes = ["case"]
         $scope.selected = "case";
+        $scope.commonField = {name:"type"}
         $scope.submit = function() {
             var data = {
                 type: $scope.selected,
-                commonField: $scope.type,
+                commonField: $scope.commonField,
                 postData: $scope.postData
             };
             mainFactory.upload(data)
@@ -20,11 +21,15 @@ angular.module('LegalManthra')
                     );
                 }).error(function(err) {
                     console.log(err);
+                    message = err.message;
+                    if(!message)
+                        message = err.msg;
+
                     $mdDialog.show(
                         $mdDialog.alert()
                         .clickOutsideToClose(true)
                         .title('Failed')
-                        .textContent('There was an error during upload : ' + err.message||"Unknown Error")
+                        .textContent('There was an error during upload : ' + (message?message:"Unknown Error"))
                         .ok('Okay')
                     );
 
