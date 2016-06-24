@@ -48,13 +48,20 @@ router.post('/', function(req, res, next) {
         postData.forEach(function(tcase) {
             console.log(counter)
             counter++;
-            elastic.addCase(type, commonField, tcase).then(function(result) {
+            elastic.addCase(type, commonField, tcase, function(result) {
+                if(result.error){
+                    toReturn = result.error.reason;
+                    retFunction();
+                }
                 toReturn.push(result);
                 if (counter == postData.length) {
                     retFunction();
                 }
             });
         });
+    }).catch(function(e){
+        console.log(e);
+        res.status(e.status).send(e);
     });
 });
 

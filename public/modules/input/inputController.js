@@ -24,7 +24,7 @@ angular.module('LegalManthra')
                         $mdDialog.alert()
                         .clickOutsideToClose(true)
                         .title('Failed')
-                        .textContent('There was an error during upload : ' + err.message)
+                        .textContent('There was an error during upload : ' + err.message||"Unknown Error")
                         .ok('Okay')
                     );
 

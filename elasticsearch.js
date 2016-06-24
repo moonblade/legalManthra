@@ -105,13 +105,13 @@ function initMapping() {
 }
 exports.initMapping = initMapping;
 
-function addCase(type, commonField, tcase) {
+function addCase(type, commonField, tcase, callback) {
     if (!tcase.id)
         tcase.id = shortId.generate();
     if (commonField)
         tcase.type = commonField
     tcase.dateOfDecision = Date.parse(tcase.dateOfDecision)
-    return elasticClient.index({
+    elasticClient.index({
         index: indexName,
         type: type,
         id: tcase.id,
@@ -136,6 +136,14 @@ function addCase(type, commonField, tcase) {
                 }
             }
         }
+    }, function(error, response) {
+        if (error) {
+            console.log(error)
+            callback(error);
+        } else
+            callback(response);
+    }).catch(function(e) {
+        console.log(e)
     });
 }
 exports.addCase = addCase;
@@ -191,31 +199,3 @@ exports.search = function get(input, callback) {
         }
     }, callback)
 }
-
-// exports.search = function get(input, callback) {
-//     return elasticClient.search({
-//         index: indexName,
-//         type: caseType,
-//         analyzer: "english",
-//         analyzeWildCard: "true",
-//         body: {
-//             query: {
-//                 multi_match: {
-//                     "query": input,
-//                     "type": "best_fields", //or most_fields for bool
-//                     "fields": ["longDescription^5",
-//                         "description",
-//                         "shortDescription",
-//                         "caseHTML^5",
-//                         "caseText^5",
-//                         "*_title^10",
-//                         "courtName",
-//                         "type^4"
-//                     ],
-//                     "fuzziness": "AUTO",
-//                     "tie_breaker": 0.3, //to 1 for bool
-//                 }
-//             }
-//         }
-//     }, callback)
-// }
