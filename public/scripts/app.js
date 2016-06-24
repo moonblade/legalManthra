@@ -1,5 +1,5 @@
-// var serverUrl = "http://63.141.232.148:3000/"
-var serverUrl = "http://localhost:3000/"
+var serverUrl = "http://63.141.232.148:3000/"
+// var serverUrl = "http://localhost:3000/"
 var cases = "cases/"
 angular.module('LegalManthra', ['ngMaterial', 'ui.router'])
     .config(function($stateProvider, $urlRouterProvider) {
