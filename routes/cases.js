@@ -4,7 +4,8 @@ var elastic = require('../elasticsearch');
 var indexName = "legal_manthra";
 var caseType = "case"
 
-elastic.init("moonblade", "moonblade");
+elastic.initAnon();
+
 router.get('/:input', function(req, res, next) {
     elastic.search(req.params.input).then(function(result) {
         console.log(result)

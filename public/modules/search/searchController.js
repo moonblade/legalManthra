@@ -1,6 +1,6 @@
 angular.module('LegalManthra')
 
-.controller('SearchController', ['$scope', 'mainFactory','$state', function($scope, mainFactory,$state) {
+.controller('SearchController', function($scope, mainFactory, $state, $stateParams) {
     // $scope.selectedItemChange = function(item) {
     //     console.log(item);
     // }
@@ -9,7 +9,15 @@ angular.module('LegalManthra')
     $scope.search = function(searchText) {
         if (searchText == "")
             return;
-        mainFactory.search(searchText)
+        else {
+            $state.go('search', {
+                term: searchText
+            })
+        }
+    }
+
+    if ($stateParams.term) {
+        mainFactory.search($stateParams.term)
             .success(function(data) {
                 console.log(data)
                 if (!data.timed_out) {
@@ -19,19 +27,19 @@ angular.module('LegalManthra')
                         $scope.results = hits.hits
                     } else {
                         $scope.results = [{
-                                "_source": {
-                                    "title": NO_STRING
-                                }
-                            }];
-                            // No results found
+                            "_source": {
+                                "title": NO_STRING
+                            }
+                        }];
+                        // No results found
                     }
                 }
             })
     }
 
     $scope.searchTextChange = function(searchText) {
-    	// if(searchText=="")
-    		// $scope.results=[]
+        // if(searchText=="")
+        // $scope.results=[]
     }
 
     $scope.querySearch = function(searchText) {
@@ -40,9 +48,11 @@ angular.module('LegalManthra')
     }
 
     $scope.showDetails = function(result) {
-    	console.log(result);
-    	if(result._source.title!=NO_STRING)
-    	var param = result._source.id;
-    	$state.go('detail',{"id":param});
+        console.log(result);
+        if (result._source.title != NO_STRING)
+            var param = result._source.id;
+        $state.go('detail', {
+            "id": param
+        });
     }
-}]);
+});

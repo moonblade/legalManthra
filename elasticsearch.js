@@ -9,10 +9,14 @@ exports.init = function(user, pass) {
     elasticClient = new elasticsearch.Client({
         host: [{
             host: 'localhost',
-            auth: user+':'+pass
+            auth: user + ':' + pass
         }],
         log: 'info'
     });
+}
+
+exports.initAnon = function() {
+    elasticClient = new elasticsearch.Client();
 }
 
 /**
@@ -123,7 +127,7 @@ function addCase(type, commonField, tcase) {
             shortDescription: tcase.shortDescription,
             title: tcase.title,
             suggest: {
-                input: tcase.title?tcase.title.split(" "):[],
+                input: tcase.title ? tcase.title.split(" ") : [],
                 output: tcase.title,
                 payload: {
                     "courtName": tcase.courtName,
@@ -187,3 +191,31 @@ exports.search = function get(input, callback) {
         }
     }, callback)
 }
+
+// exports.search = function get(input, callback) {
+//     return elasticClient.search({
+//         index: indexName,
+//         type: caseType,
+//         analyzer: "english",
+//         analyzeWildCard: "true",
+//         body: {
+//             query: {
+//                 multi_match: {
+//                     "query": input,
+//                     "type": "best_fields", //or most_fields for bool
+//                     "fields": ["longDescription^5",
+//                         "description",
+//                         "shortDescription",
+//                         "caseHTML^5",
+//                         "caseText^5",
+//                         "*_title^10",
+//                         "courtName",
+//                         "type^4"
+//                     ],
+//                     "fuzziness": "AUTO",
+//                     "tie_breaker": 0.3, //to 1 for bool
+//                 }
+//             }
+//         }
+//     }, callback)
+// }

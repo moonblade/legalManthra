@@ -56,18 +56,18 @@ app.use(function(err, req, res, next) {
     });
 });
 
-var elastic = require('./elasticsearch');
-caseIndex = "case";
-var init = function(index) {
-    elastic.indexExists(index).then(function(exists) {
-        if (!exists) {
-            return elastic.initIndex(index).then(function() {
-                elastic.initMapping(index)
-            });
-        }
-    });
-}
-init(caseIndex);
+// var elastic = require('./elasticsearch');
+// caseIndex = "case";
+// var init = function(index) {
+//     elastic.indexExists(index).then(function(exists) {
+//         if (!exists) {
+//             return elastic.initIndex(index).then(function() {
+//                 elastic.initMapping(index)
+//             });
+//         }
+//     });
+// }
+// init(caseIndex);
 
 
 module.exports = app;
