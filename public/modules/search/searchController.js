@@ -15,22 +15,27 @@ angular.module('LegalManthra')
             })
         }
     }
-
+    $scope.loginAction = $localStorage.user ? "Logout" : "Login";
     $scope.login = function() {
-        GooglePlus.login().then(function(authResult) {
-            console.log(authResult);
-            GooglePlus.getUser().then(function(user) {
-                console.log(user);
-                $localStorage.user = user;
+        if ($localStorage.user) {
+            // logout
+            GooglePlus.logout();
+            $localStorage.user = null
+            $scope.loginAction = "Login"
+        } else {
+            // login
+            GooglePlus.login().then(function(authResult) {
+                console.log(authResult);
+                GooglePlus.getUser().then(function(user) {
+                    console.log(user);
+                    $localStorage.user = user;
+                    $scope.loginAction = "Logout"
+                });
+            }, function(err) {
+                console.log(err);
             });
-        }, function(err) {
-            console.log(err);
-        });
+        }
     }
-    // $scope.$on('$viewContentLoaded', function() {
-        //Here your view content is fully loaded !!
-        // $scope.login();
-    // });
 
     if ($stateParams.term) {
         mainFactory.search($stateParams.term)

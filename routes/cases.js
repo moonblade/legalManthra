@@ -4,7 +4,6 @@ var express = require('express'),
     indexName = "legal_manthra",
     caseType = "case",
     shortId = require('shortid'),
-    passport = require('passport'),
     cors = require('cors')
 require('datejs');
 
@@ -17,7 +16,7 @@ function ensureAuthenticated(req, res, next) {
     res.status(401).send({"message":"Unauthorized Access"});
 }
 
-router.get('/:input',ensureAuthenticated, function(req, res, next) {
+router.get('/:input', function(req, res, next) {
     elastic.search(req.params.input).then(function(result) {
         console.log(result)
         res.json(result)
@@ -42,7 +41,7 @@ router.get('/display/:id', function(req, res, next) {
     elastic.getCase(req.params.id, callback)
 })
 
-router.put('/',ensureAuthenticated, function(req, res, next) {
+router.put('/', function(req, res, next) {
     var index = "case",
         elasticType = "case",
         type = req.body.type,

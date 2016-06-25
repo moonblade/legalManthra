@@ -17,8 +17,6 @@
     "express-session": "^1.13.0",
     "jade": "~1.11.0",
     "morgan": "~1.6.1",
-    "passport": "^0.3.2",
-    "passport-google-oauth2": "^0.1.6",
     "serve-favicon": "~2.3.0",
     "shortid": "^2.2.6"
   }

@@ -1,5 +1,6 @@
-<div class="g-signin2" data-onsuccess="onSignIn"></div>
-
+<div layout="row" layout-align="end">
+    <md-button class="md-raised md-primary" ng-click="login()">{{loginAction}}</md-button>
+</div>
 <div layout="row" ng-style="{'height':height+'%'}" layout-align="center center">
     <!-- <input ng-model="query" type="text"> -->
     <form ng-submit="search(searchText)">
@@ -9,13 +10,11 @@
             </md-item-template>
         </md-autocomplete>
     </form>
-    <!-- <md-button class="md-raised md-primary" ng-click="login()">Search</md-button> -->
 </div>
 <div layout="row">
     <md-list flex>
         <div ng-repeat="result in results" ng-show="results">
             <md-list-item class="md-3-line" ng-click="showDetails(result)">
-                <!-- <img ng-src="{{item.face}}?{{$index}}" class="md-avatar" alt="{{item.who}}" /> -->
                 <div class="md-list-item-text" layout="column">
                     <h3>{{ result._source.title | titlecase | limitTo:150}}</h3>
                     <h4 ng-show="result._source.courtName">{{ result._source.courtName | titlecase}} - {{ result._source.dateOfDecision | date:'MMMM dd, yyyy'}} </h4>
