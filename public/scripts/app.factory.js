@@ -3,18 +3,22 @@ angular.module('LegalManthra')
         var caseUrl = serverUrl + cases;
         var factory = {};
 
+        factory.login = function(){
+            return $http.get(serverUrl+"auth/google");
+        }
+
         factory.getSuggestions = function(input){
         	console.log(caseUrl+"getsuggestions/"+input)
         	return $http.get(caseUrl+"getsuggestions/"+input);
         }
 
         factory.search = function(input) {
-            return $http.get(caseUrl + input);
+            return $http.get(caseUrl + input,{withCredentials:true});
         }
 
         factory.getById = function(id){
             console.log(caseUrl+'display/'+id)
-            return $http.get(caseUrl+'display/'+id);
+            return $http.get(caseUrl+'display/'+id,{withCredentials:true});
         }
 
         factory.upload = function(data){

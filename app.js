@@ -7,8 +7,9 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     cors = require('cors'),
     cases = require('./routes/cases'),
-    session = require('express-session')
-passport = require('passport'),
+    session = require('express-session'),
+    RedisStore = require('connect-redis')(session),
+    passport = require('passport'),
     GoogleStrategy = require('passport-google-oauth2').Strategy,
     GOOGLE_CLIENT_ID = "596155870082-1b23ddnvjc4qpa5aisbvuk8sb233pv4l.apps.googleusercontent.com",
     GOOGLE_CLIENT_SECRET = "1FkxzjH0edFp23VqpvkO2gLR",
@@ -17,18 +18,33 @@ passport = require('passport'),
 // view engine setup
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(cors())
+var whitelist = [config.serverUrl, 'https://accounts.google.com', null];
+var corsOptions = {
+  origin: function(origin, callback){
+    var originIsWhitelisted = whitelist.indexOf(origin) !== -1;
+    callback(null, originIsWhitelisted);
+  },
+  credentials:true
+};
+app.use(cors({
+    origin:true,
+    credentials:true
+}))
 app.use(logger('dev'));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(cookieParser());
 app.use(bodyParser.json({
     limit: '500mb'
 }));
 app.use(bodyParser.urlencoded({
     extended: false
 }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
     secret: "legal_manthra",
+    store: new RedisStore({
+        host: '127.0.0.1',
+        port: 6379
+    }),
     resave: true,
     saveUninitialized: true
 }));
@@ -59,9 +75,7 @@ app.get('/auth/google', passport.authenticate('google', {
         scope: ['https://www.googleapis.com/auth/userinfo.profile',
             'https://www.googleapis.com/auth/userinfo.email'
         ]
-    }),
-    function(req, res) {} // this never gets called
-);
+    }));
 
 app.get('/oauth2callback', passport.authenticate('google', {
     successRedirect: '/',

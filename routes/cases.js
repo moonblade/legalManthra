@@ -4,20 +4,20 @@ var express = require('express'),
     indexName = "legal_manthra",
     caseType = "case",
     shortId = require('shortid'),
-    passport = require('passport')
+    passport = require('passport'),
+    cors = require('cors')
 require('datejs');
 
 elastic.initAnon();
 
 function ensureAuthenticated(req, res, next) {
-    // if (req.isAuthenticated()) {
+    if (req.isAuthenticated()) {
         return next();
-    // }
+    }
     res.status(401).send({"message":"Unauthorized Access"});
 }
 
-
-router.get('/:input', function(req, res, next) {
+router.get('/:input',ensureAuthenticated, function(req, res, next) {
     elastic.search(req.params.input).then(function(result) {
         console.log(result)
         res.json(result)
