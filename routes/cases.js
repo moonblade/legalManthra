@@ -16,7 +16,6 @@ function ensureAuthenticated(req, res, next) {
     res.status(401).send({"message":"Unauthorized Access"});
 }
 
-elastic.login("asdf","asdf")
 
 router.get('/:input', function(req, res, next) {
     elastic.search(req.params.input).then(function(result) {
