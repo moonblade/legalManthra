@@ -1,12 +1,23 @@
-var express = require('express');
-var router = express.Router();
-var elastic = require('../elasticsearch');
-var indexName = "legal_manthra";
-var caseType = "case"
-var shortId = require('shortid');
+var express = require('express'),
+    router = express.Router(),
+    elastic = require('../elasticsearch'),
+    indexName = "legal_manthra",
+    caseType = "case",
+    shortId = require('shortid'),
+    passport = require('passport')
 require('datejs');
 
 elastic.initAnon();
+
+function ensureAuthenticated(req, res, next) {
+    // if (req.isAuthenticated()) {
+        return next();
+    // }
+    res.status(401).send({"message":"Unauthorized Access"});
+}
+
+elastic.login("asdf","asdf")
+
 router.get('/:input', function(req, res, next) {
     elastic.search(req.params.input).then(function(result) {
         console.log(result)
@@ -32,7 +43,7 @@ router.get('/display/:id', function(req, res, next) {
     elastic.getCase(req.params.id, callback)
 })
 
-router.put('/', function(req, res, next) {
+router.put('/',ensureAuthenticated, function(req, res, next) {
     var index = "case",
         elasticType = "case",
         type = req.body.type,
@@ -41,7 +52,7 @@ router.put('/', function(req, res, next) {
         bulkBody = []
     postData.forEach(function(element) {
         if (!element.id)
-            element.id = shortid.generate();
+            element.id = shortId.generate();
         if (element.dateOfDecision)
             element.dateOfDecision = Date.parse(element.dateOfDecision)
         element[commonField.name] = commonField.value;

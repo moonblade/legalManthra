@@ -5,29 +5,29 @@ require('datejs');
 var indexName = "legal_manthra";
 var caseType = "case";
 var elasticClient;
-exports.init = function(user, pass) {
+
+exports.initAnon = function initAnon() {
+    elasticClient = new elasticsearch.Client();
+}
+
+exports.login = function(user, pass) {
     elasticClient = new elasticsearch.Client({
         host: [{
             host: 'localhost',
             auth: user + ':' + pass
         }],
         log: 'info'
-    });
-}
-
-exports.initAnon = function() {
-    elasticClient = new elasticsearch.Client();
+    })
 }
 
 /**
  * Delete an existing index
  */
-function deleteIndex() {
+exports.deleteIndex = function() {
     return elasticClient.indices.delete({
         index: indexName
     });
 }
-exports.deleteIndex = deleteIndex;
 
 /**
  * create the index
