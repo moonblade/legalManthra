@@ -1,8 +1,8 @@
 var serverUrl = "http://63.141.232.148:3000/"
 var serverUrl = "http://127.0.0.1:3000/"
 var cases = "cases/"
-angular.module('LegalManthra', ['ngMaterial', 'ui.router', 'googleplus'])
-    .config(function($stateProvider, $urlRouterProvider) {
+angular.module('LegalManthra', ['ngMaterial', 'ui.router', 'googleplus', 'ngStorage'])
+    .config(function($stateProvider, $urlRouterProvider, GooglePlusProvider) {
 
         $urlRouterProvider.otherwise('/search/');
 
@@ -21,10 +21,10 @@ angular.module('LegalManthra', ['ngMaterial', 'ui.router', 'googleplus'])
                 url: '/input',
                 templateUrl: 'modules/input/input.html',
                 controller: 'inputController'
-            })
-    }).config(['GooglePlusProvider', function(GooglePlusProvider) {
+            });
+
         GooglePlusProvider.init({
             clientId: '704894076751-sogp2ijut7r533b9igomll4rgs44sori.apps.googleusercontent.com',
             apiKey: 'AIzaSyAn10rsKeY1EOv4MK_3XBL7edv9hLAaVkE'
         });
-    }]);
+    });

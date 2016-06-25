@@ -1,5 +1,5 @@
 angular.module('LegalManthra')
-    .factory('mainFactory', function($http) {
+    .factory('mainFactory', function($http,$localStorage) {
         var caseUrl = serverUrl + cases;
         var factory = {};
 
