@@ -7,6 +7,7 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     cors = require('cors'),
     cases = require('./routes/cases'),
+    common = require('./routes/common'),
     session = require('express-session'),
     app = express();
 
@@ -28,6 +29,7 @@ app.use(session({
 }));
 
 app.use('/cases', cases);
+app.use('', common);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

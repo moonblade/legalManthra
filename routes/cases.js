@@ -4,17 +4,10 @@ var express = require('express'),
     indexName = "legal_manthra",
     caseType = "case",
     shortId = require('shortid'),
-    cors = require('cors')
+    basicAuth = require('basic-auth')
 require('datejs');
 
 elastic.initAnon();
-
-function ensureAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    res.status(401).send({"message":"Unauthorized Access"});
-}
 
 router.get('/:input', function(req, res, next) {
     elastic.search(req.params.input).then(function(result) {
@@ -42,7 +35,7 @@ router.get('/display/:id', function(req, res, next) {
 })
 
 router.put('/', function(req, res, next) {
-    var index = "case",
+    var index = "legal_manthra",
         elasticType = "case",
         type = req.body.type,
         commonField = req.body.commonField,
