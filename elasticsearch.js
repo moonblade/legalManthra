@@ -1,10 +1,9 @@
-var elasticsearch = require('elasticsearch');
-var shortId = require('shortid');
+var elasticsearch = require('elasticsearch'),
+    debug = require('debug')('client'),
+    shortId = require('shortid'),
+    constant = require('./config/constants'),
+    elasticClient;
 require('datejs');
-
-var indexName = "legal_manthra";
-var caseType = "case";
-var elasticClient;
 
 exports.initAnon = function initAnon() {
     elasticClient = new elasticsearch.Client();
@@ -25,7 +24,7 @@ exports.login = function(user, pass) {
  */
 exports.deleteIndex = function() {
     return elasticClient.indices.delete({
-        index: indexName
+        index: constant.indexName
     });
 }
 
@@ -34,7 +33,7 @@ exports.deleteIndex = function() {
  */
 function initIndex() {
     return elasticClient.indices.create({
-        index: indexName
+        index: constant.indexName
     });
 }
 exports.initIndex = initIndex;
@@ -44,15 +43,15 @@ exports.initIndex = initIndex;
  */
 function indexExists() {
     return elasticClient.indices.exists({
-        index: indexName
+        index: constant.indexName
     });
 }
 exports.indexExists = indexExists;
 
 function initMapping() {
     return elasticClient.indices.putMapping({
-        index: indexName,
-        type: caseType,
+        index: constant.indexName,
+        type: constant.caseType,
         body: {
             properties: {
                 type: {
@@ -107,22 +106,55 @@ exports.initMapping = initMapping;
 
 exports.addCaseBulk = function(bulkBody) {
     return elasticClient.bulk({
-        body:bulkBody
+        body: bulkBody
     });
+}
+
+exports.addUser = function addUser(user, callback) {
+    user.role = constant.user;
+    return elasticClient.indices.create({
+        index: constant.userIndex,
+        type: constant.userType,
+        id: (user.id || shortid.generate()),
+        body: user
+    }, callback);
+}
+
+var getUser = function(user, callback) {
+    return elasticClient.get({
+        index: constant.userIndex,
+        type: constant.userType,
+        id: user.id
+    }, callback)
+}
+exports.getUser = getUser
+
+exports.editUser = function(user, newRole, callback) {
+    debug(user)
+    debug(newRole)
+    user.role = newRole
+    return elasticClient.update({
+        index: constant.userIndex,
+        type: constant.userType,
+        id: user.id,
+        body: {
+            doc: user
+        }
+    }, callback);
 }
 
 exports.getCase = function getCase(id, callback) {
     return elasticClient.get({
-        index: indexName,
-        type: caseType,
+        index: constant.indexName,
+        type: constant.caseType,
         id: id
     }, callback)
 }
 
 exports.getSuggestions = function(input, callback) {
     return elasticClient.suggest({
-        index: indexName,
-        type: caseType,
+        index: constant.indexName,
+        type: constant.caseType,
         body: {
             suggest: {
                 text: input,
@@ -137,8 +169,8 @@ exports.getSuggestions = function(input, callback) {
 
 exports.search = function get(input, callback) {
     return elasticClient.search({
-        index: indexName,
-        type: caseType,
+        index: constant.indexName,
+        type: constant.caseType,
         analyzer: "english",
         analyzeWildCard: "true",
         body: {

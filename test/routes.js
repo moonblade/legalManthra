@@ -2,23 +2,39 @@ var should = require('should'),
     assert = require('assert'),
     request = require('supertest'),
     winston = require('winston'),
-    debug = require('debug')('test')
+    debug = require('debug')('test'),
+    constant = require('../config/constants')
 config = require('../config');
 
 input = {
-    search: "bombay",
+    search: "my test",
     detail: "testinput",
-    input: "",
     login: {
-        user: {
-            name: "moonblade",
-            password: "moonblade"
-        }
+        id: "101130645015448847110",
+        name: "moonblade"
+    },
+    login2: {
+        id: "1",
+        name: "moonblade"
+    },
+    editUser: {
+        "user": {
+            "id": "101130645015448847110",
+            "name": "moonblade"
+        },
+        "editUser": {
+            "id": "1",
+            "name": "moonblade"
+        },
+        "newRole": "0"
     },
     putData: {
-        "type": "case",
-        "commonField": "test input",
-        "postData": "[{\"id\": \"testinput\"}]"
+        "type": "type",
+        "commonField": "test Input",
+        "postData": "[{\"id\": \"testinput\",\"title\":\"my test\"}]",
+        "user": {
+            "id": "101130645015448847110"
+        }
     }
 }
 
@@ -39,22 +55,10 @@ describe('Routing', function() {
                 })
         });
 
-        it('puts data', function(done) {
-            request(caseUrl)
-                .put("")
-                .send(input.putData)
-                .expect('Content-Type', /json/)
-                .expect(200)
-                .end(function(err,res){
-                	if(err)
-                		return done(err)
-                	done();
-                })
-        })
-
-        it('logs out', function(done) {
+        it('logs in for second user', function(done) {
             request(url)
-                .post("/logout")
+                .post("/login")
+                .send(input.login2)
                 .expect('Content-Type', /json/)
                 .expect(200)
                 .end(function(err, res) {
@@ -63,6 +67,32 @@ describe('Routing', function() {
                     done();
                 })
         });
+
+        it('puts data', function(done) {
+            request(caseUrl)
+                .put("")
+                .send(input.putData)
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end(function(err, res) {
+                    if (err)
+                        return done(err)
+                    done();
+                })
+        })
+
+        it('changes user to normal user', function(done) {
+            request(url)
+                .post("/edituser")
+                .send(input.editUser)
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end(function(err, res) {
+                    if (err)
+                        return done(err)
+                    done();
+                })
+        })
 
     })
 
