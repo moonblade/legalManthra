@@ -19,35 +19,6 @@ exports.login = function(user, pass) {
     })
 }
 
-/**
- * Delete an existing index
- */
-exports.deleteIndex = function() {
-    return elasticClient.indices.delete({
-        index: constant.indexName
-    });
-}
-
-/**
- * create the index
- */
-function initIndex() {
-    return elasticClient.indices.create({
-        index: constant.indexName
-    });
-}
-exports.initIndex = initIndex;
-
-/**
- * check if the index exists
- */
-function indexExists() {
-    return elasticClient.indices.exists({
-        index: constant.indexName
-    });
-}
-exports.indexExists = indexExists;
-
 function initMapping() {
     return elasticClient.indices.putMapping({
         index: constant.indexName,
@@ -91,12 +62,6 @@ function initMapping() {
                 title: {
                     type: "string",
                     analyzer: "english"
-                },
-                suggest: {
-                    type: "completion",
-                    analyzer: "simple",
-                    search_analyzer: "simple",
-                    payloads: true
                 }
             }
         }
@@ -145,32 +110,16 @@ exports.editUser = function(user, newRole, callback) {
 
 exports.getCase = function getCase(id, callback) {
     return elasticClient.get({
-        index: constant.indexName,
+        index: constant.caseIndex,
         type: constant.caseType,
         id: id
     }, callback)
 }
 
-exports.getSuggestions = function(input, callback) {
-    return elasticClient.suggest({
-        index: constant.indexName,
-        type: constant.caseType,
-        body: {
-            suggest: {
-                text: input,
-                completion: {
-                    field: "suggest",
-                    fuzzy: true
-                }
-            }
-        }
-    })
-}
-
 exports.search = function get(input, callback) {
     return elasticClient.search({
-        index: constant.indexName,
-        type: constant.caseType,
+        index: constant.caseIndex,
+        type: "_all",
         analyzer: "english",
         analyzeWildCard: "true",
         body: {

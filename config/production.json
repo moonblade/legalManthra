@@ -1,3 +1,5 @@
 {
-    "serverUrl": "http://search.legalmantra.in:3000"
+    "serverUrl": "http://search.legalmantra.in:3000",
+    "caseIndex": "case",
+    "userIndex": "user"
 }
