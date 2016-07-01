@@ -3,6 +3,11 @@ angular.module('LegalManthra')
         var caseUrl = serverUrl + cases;
         var factory = {};
 
+        var auth = function(json)
+        {
+            json.user = $localStorage.user;
+        }
+
         factory.login = function(userData) {
             return $http.post(serverUrl + "login/", userData);
         }
@@ -30,10 +35,11 @@ angular.module('LegalManthra')
 
         factory.upload = function(data) {
             console.log(caseUrl)
+            auth(data)
             return $http({
                 "url": caseUrl,
                 "method": "PUT",
-                "data": data
+                "data": data,
             })
 
         }

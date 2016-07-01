@@ -20,25 +20,19 @@ router.get('/:input', function(req, res, next) {
     });
 });
 
-router.get('/getsuggestions/:input', function(req, res, next) {
-    var callback = function(err, result) {
-        if (!err) {
-            res.json(result);
-        }
-    }
-    elastic.getSuggestions(req.params.input, callback)
-})
-
 router.get('/display/:id', function(req, res, next) {
     var callback = function(err, result) {
         if (!err) {
             res.json(result)
+        }else{
+            res.status(500).send({"message":"Some error occurred "+err})
         }
     }
     elastic.getCase(req.params.id, callback)
 })
 
 router.put('/', auth.writer, function(req, res, next) {
+    debug(res.body)
     var type = req.body.type,
         commonField = req.body.commonField,
         postData = JSON.parse(req.body.postData),

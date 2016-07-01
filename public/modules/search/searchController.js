@@ -1,6 +1,6 @@
 angular.module('LegalManthra')
 
-.controller('SearchController', function($scope, mainFactory, $state, $stateParams, GooglePlus, $localStorage) {
+.controller('SearchController', function($scope, mainFactory, $state, $stateParams) {
     // $scope.selectedItemChange = function(item) {
     //     console.log(item);
     // }
@@ -13,32 +13,6 @@ angular.module('LegalManthra')
             $state.go('search', {
                 term: searchText
             })
-        }
-    }
-    $scope.loginAction = $localStorage.user ? "Logout" : "Login";
-    $scope.login = function() {
-        if ($localStorage.user) {
-            // logout
-            $localStorage.user = null
-            $scope.loginAction = "Login"
-            GooglePlus.logout();
-        } else {
-            // login
-            GooglePlus.login().then(function(authResult) {
-                // console.log(authResult);
-                GooglePlus.getUser().then(function(user) {
-                    console.log(user);
-                    mainFactory.login(user)
-                        .success(function(result) {
-                            $scope.loginAction = "Logout"
-                            $localStorage.user = user;
-                        }).error(function(err) {
-                            console.log(err)
-                        })
-                });
-            }, function(err) {
-                console.log(err);
-            });
         }
     }
 
