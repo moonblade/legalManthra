@@ -1,6 +1,6 @@
 angular.module('LegalManthra')
 
-.controller('SearchController', function($scope, mainFactory, $state, $stateParams, GooglePlus, $localStorage) {
+.controller('SearchController', function($scope, mainFactory, $state, $stateParams) {
     // $scope.selectedItemChange = function(item) {
     //     console.log(item);
     // }
@@ -13,27 +13,6 @@ angular.module('LegalManthra')
             $state.go('search', {
                 term: searchText
             })
-        }
-    }
-    $scope.loginAction = $localStorage.user ? "Logout" : "Login";
-    $scope.login = function() {
-        if ($localStorage.user) {
-            // logout
-            GooglePlus.logout();
-            $localStorage.user = null
-            $scope.loginAction = "Login"
-        } else {
-            // login
-            GooglePlus.login().then(function(authResult) {
-                console.log(authResult);
-                GooglePlus.getUser().then(function(user) {
-                    console.log(user);
-                    $localStorage.user = user;
-                    $scope.loginAction = "Logout"
-                });
-            }, function(err) {
-                console.log(err);
-            });
         }
     }
 
@@ -55,6 +34,12 @@ angular.module('LegalManthra')
                         // No results found
                     }
                 }
+            }).error(function(error) {
+                $scope.results = [{
+                    "_source": {
+                        "title": NO_STRING
+                    }
+                }];
             })
     }
 

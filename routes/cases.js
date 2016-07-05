@@ -1,50 +1,38 @@
 var express = require('express'),
     router = express.Router(),
     elastic = require('../elasticsearch'),
+    constant = require('../config/constants'),
     indexName = "legal_manthra",
     caseType = "case",
+    debug = require('debug')('cases')
     shortId = require('shortid'),
-    cors = require('cors')
+    auth = require('./auth')
+
 require('datejs');
 
-elastic.initAnon();
-
-function ensureAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    res.status(401).send({"message":"Unauthorized Access"});
-}
+elastic.login("moonblade","moonblade");
 
 router.get('/:input', function(req, res, next) {
     elastic.search(req.params.input).then(function(result) {
-        console.log(result)
+        debug(result)
         res.json(result)
     });
 });
-
-router.get('/getsuggestions/:input', function(req, res, next) {
-    var callback = function(err, result) {
-        if (!err) {
-            res.json(result);
-        }
-    }
-    elastic.getSuggestions(req.params.input, callback)
-})
 
 router.get('/display/:id', function(req, res, next) {
     var callback = function(err, result) {
         if (!err) {
             res.json(result)
+        }else{
+            res.status(500).send({"message":"Some error occurred "+err})
         }
     }
     elastic.getCase(req.params.id, callback)
 })
 
-router.put('/', function(req, res, next) {
-    var index = "case",
-        elasticType = "case",
-        type = req.body.type,
+router.put('/', auth.writer, function(req, res, next) {
+    debug(res.body)
+    var type = req.body.type,
         commonField = req.body.commonField,
         postData = JSON.parse(req.body.postData),
         bulkBody = []
@@ -56,8 +44,8 @@ router.put('/', function(req, res, next) {
         element[commonField.name] = commonField.value;
         bulkBody.push({
             index: {
-                _index: index,
-                _type: elasticType,
+                _index: constant.caseIndex,
+                _type: constant.caseType,
                 _id: element.id
             }
         })
@@ -65,10 +53,10 @@ router.put('/', function(req, res, next) {
     });
     elastic.addCaseBulk(bulkBody)
         .then(function(result) {
-            console.log(result);
+            debug(result);
             res.json(result)
         }).error(function(error) {
-            console.log(error);
+            debug(error);
             res.status(error.status).send(error);
         })
 })
