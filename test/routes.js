@@ -10,12 +10,16 @@ input = {
     search: "my test",
     detail: "testinput",
     login: {
-        id: "101130645015448847110",
-        name: "moonblade"
+        "user": {
+            id: "101130645015448847110",
+            name: "moonblade"
+        }
     },
     login2: {
-        id: "1",
-        name: "moonblade"
+        "user": {
+            id: "1",
+            name: "moonblade"
+        }
     },
     editUser: {
         "user": {

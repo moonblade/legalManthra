@@ -5,6 +5,8 @@ var elasticsearch = require('elasticsearch'),
     elasticClient;
 require('datejs');
 
+exports.client = elasticClient;
+
 exports.initAnon = function initAnon() {
     elasticClient = new elasticsearch.Client();
 }
@@ -19,55 +21,55 @@ exports.login = function(user, pass) {
     })
 }
 
-function initMapping() {
-    return elasticClient.indices.putMapping({
-        index: constant.indexName,
-        type: constant.caseType,
-        body: {
-            properties: {
-                type: {
-                    type: "string",
-                    analyzer: "english"
-                },
-                longDescription: {
-                    type: "string",
-                    analyzer: "english"
-                },
-                dateOfDecision: {
-                    type: "date"
-                },
-                courtName: {
-                    type: "string",
-                    analyzer: "english"
-                },
-                caseHTML: {
-                    type: "string",
-                    analyzer: "english"
-                },
-                caseText: {
-                    type: "string",
-                    analyzer: "english"
-                },
-                description: {
-                    type: "string",
-                    analyzer: "english"
-                },
-                id: {
-                    type: "string"
-                },
-                shortDescription: {
-                    type: "string",
-                    analyzer: "english"
-                },
-                title: {
-                    type: "string",
-                    analyzer: "english"
-                }
-            }
-        }
+exports.deleteIndex = function(indexName) {
+    return elasticClient.indices.delete({
+        index: indexName
     });
 }
-exports.initMapping = initMapping;
+
+exports.initIndex = function(indexName) {
+    return elasticClient.indices.create({
+        index: indexName
+    });
+}
+
+exports.indexExists = function(indexName) {
+    return elasticClient.indices.exists({
+        index: indexName
+    });
+}
+
+
+exports.getAlias = function(index, alias) {
+    debug(index, alias)
+    return elasticClient.indices.getAlias({
+        index: index,
+        name: alias
+    })
+}
+
+exports.putAlias = function(index, alias) {
+    debug(index, alias)
+    return elasticClient.indices.putAlias({
+        index: index,
+        name: alias
+    })
+}
+
+exports.deleteAlias = function(index, alias) {
+    return elasticClient.indices.deleteAlias({
+        index: index,
+        name: alias
+    })
+}
+
+exports.putMapping = function(indexName, type, mapping) {
+    return elasticClient.indices.putMapping({
+        index: indexName,
+        type: type,
+        body: mapping
+    });
+}
 
 exports.addCaseBulk = function(bulkBody) {
     return elasticClient.bulk({
@@ -75,26 +77,27 @@ exports.addCaseBulk = function(bulkBody) {
     });
 }
 
-exports.addUser = function addUser(user, callback) {
+exports.addUser = function addUser(user) {
     user.role = constant.user;
-    return elasticClient.indices.create({
+    debug(user)
+    debug(user.id)
+    return elasticClient.create({
         index: constant.userIndex,
         type: constant.userType,
-        id: (user.id || shortid.generate()),
+        id: (user.id || shortId.generate()),
         body: user
-    }, callback);
+    });
 }
 
-var getUser = function(user, callback) {
+exports.getUser = function(user, callback) {
     return elasticClient.get({
         index: constant.userIndex,
         type: constant.userType,
         id: user.id
     }, callback)
 }
-exports.getUser = getUser
 
-exports.editUser = function(user, newRole, callback) {
+exports.editUser = function(user, newRole) {
     debug(user)
     debug(newRole)
     user.role = newRole
@@ -105,7 +108,7 @@ exports.editUser = function(user, newRole, callback) {
         body: {
             doc: user
         }
-    }, callback);
+    });
 }
 
 exports.getCase = function getCase(id, callback) {
@@ -119,14 +122,14 @@ exports.getCase = function getCase(id, callback) {
 exports.search = function get(input, callback) {
     return elasticClient.search({
         index: constant.caseIndex,
-        type: "_all",
+        type: constant.caseType,
         analyzer: "english",
         analyzeWildCard: "true",
         body: {
             query: {
                 multi_match: {
                     "query": input,
-                    "type": "best_fields", //or most_fields for bool
+                    "type": "cross_fields", //or most_fields for bool
                     "fields": ["longDescription^5",
                         "description",
                         "shortDescription",

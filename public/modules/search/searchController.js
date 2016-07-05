@@ -34,6 +34,12 @@ angular.module('LegalManthra')
                         // No results found
                     }
                 }
+            }).error(function(error) {
+                $scope.results = [{
+                    "_source": {
+                        "title": NO_STRING
+                    }
+                }];
             })
     }
 

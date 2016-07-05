@@ -22,17 +22,18 @@ angular.module('LegalManthra')
             };
             if (!$localStorage.user) {
                 show("Error", "Please login for upload");
+            } else if (!$scope.postData) {
+                show("Error", "Please enter data to upload");
             } else {
+                console.log(data)
                 mainFactory.upload(data)
                     .success(function(data) {
                         console.log(data)
                         show("Success", "The data has been uploaded successfully")
                     }).error(function(err) {
                         console.log(err);
-                        message = err.message;
-                        if (!message)
-                            message = err.msg;
-                        show("Failed", 'There was an error during upload : ' + (message ? message : "Unknown Error"))
+                        message = err ? (err.message || err.message) : "Unknown Error";
+                        show("Failed", 'There was an error during upload : ' + message)
                     });
             }
         }
@@ -50,7 +51,9 @@ angular.module('LegalManthra')
                     // console.log(authResult);
                     GooglePlus.getUser().then(function(user) {
                         // console.log(user);
-                        mainFactory.login(user)
+                        mainFactory.login({
+                                user: user
+                            })
                             .success(function(result) {
                                 // console.log(result)
                                 $scope.loginAction = "Logout"

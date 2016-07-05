@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "nodemon ./bin/www",
-    "test": "mocha"
+    "test": "mocha",
+    "pm" : "pm2 start bin/www --watch"
   },
   "dependencies": {
     "assert": "^1.4.1",
