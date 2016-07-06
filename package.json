@@ -5,7 +5,7 @@
   "scripts": {
     "start": "nodemon ./bin/www",
     "test": "mocha",
-    "pm" : "pm2 start bin/www --watch"
+    "pm": "pm2 start bin/www --watch"
   },
   "dependencies": {
     "assert": "^1.4.1",
@@ -27,5 +27,13 @@
     "should": "^9.0.2",
     "supertest": "^1.2.0",
     "winston": "^2.2.0"
+  },
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-uglify": "^1.0.1",
+    "grunt-git": "^1.0.0",
+    "grunt-text-replace": "^0.4.0",
+    "grunt-usemin": "^3.1.1"
   }
 }

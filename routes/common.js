@@ -1,7 +1,6 @@
 var express = require('express'),
     router = express.Router(),
     elastic = require('../elasticsearch'),
-    basicAuth = require('basic-auth'),
     debug = require('debug')('common'),
     auth = require('./auth'),
     constant = require('../config/constants')

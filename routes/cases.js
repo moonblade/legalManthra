@@ -7,7 +7,6 @@ var express = require('express'),
     debug = require('debug')('cases')
     shortId = require('shortid'),
     auth = require('./auth')
-    basicAuth = require('basic-auth')
 
 require('datejs');
 
