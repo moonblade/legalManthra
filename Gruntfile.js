@@ -16,19 +16,19 @@ module.exports = function(grunt) {
         },
         'replace': {
             serverUrl: {
-                src: ['public/production/scripts/production.js'],
+                src: ['public/production/scripts/production.js','public/development/scripts/app.js'],
                 overwrite: true,
                 replacements: [{
-                    from: "serverUrl = \"http://localhost:3000/\",",
-                    to: " serverUrl = \"http://63.141.232.148:3000/\","
+                    from: "localhost",
+                    to: "63.141.232.148"
                 }]
             },
             localUrl: {
-                src: ['public/production/scripts/production.js'],
+                src: ['public/production/scripts/production.js','public/development/scripts/app.js'],
                 overwrite: true,
                 replacements: [{
-                    from: "//serverUrl = \"http://63.141.232.148:3000/\",",
-                    to: "serverUrl = \"http://localhost:3000/\",",
+                    from: "63.141.232.148",
+                    to: "localhost",
                 }]
             },
             publicDevel: {
