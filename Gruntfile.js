@@ -1,3 +1,4 @@
+var args = process.argv;
 module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -16,7 +17,7 @@ module.exports = function(grunt) {
         },
         'replace': {
             serverUrl: {
-                src: ['public/production/scripts/production.js','public/development/scripts/app.js'],
+                src: ['public/production/scripts/production.js', 'public/development/scripts/app.js'],
                 overwrite: true,
                 replacements: [{
                     from: "localhost",
@@ -24,7 +25,7 @@ module.exports = function(grunt) {
                 }]
             },
             localUrl: {
-                src: ['public/production/scripts/production.js','public/development/scripts/app.js'],
+                src: ['public/production/scripts/production.js', 'public/development/scripts/app.js'],
                 overwrite: true,
                 replacements: [{
                     from: "63.141.232.148",
@@ -67,6 +68,9 @@ module.exports = function(grunt) {
         },
         gitcommit: {
             ammend: {
+                options: {
+                    message: args[2]
+                },
                 files: [{
                     src: ["."],
                     expand: true,
@@ -86,6 +90,7 @@ module.exports = function(grunt) {
         'usemin',
         'replace:localUrl'
     ]);
+    grunt.registerTask('test', ['gitcommit:ammend'])
     grunt.registerTask('upload', [
         'replace:serverUrl',
         'replace:publicProd',
