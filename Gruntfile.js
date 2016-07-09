@@ -10,6 +10,7 @@ module.exports = function(grunt) {
                     'public/development/scripts/app.filter.js',
                     'public/development/modules/detail/detailController.js',
                     'public/development/modules/input/inputController.js',
+                    'public/development/modules/admin/adminController.js',
                     'public/development/modules/search/searchController.js'
                 ],
                 dest: 'public/production/scripts/production.js'
@@ -69,7 +70,7 @@ module.exports = function(grunt) {
         gitcommit: {
             ammend: {
                 options: {
-                    message: args[2]
+                    message: "Changed to development folder and then grunted to a single file, added abstract state and others as substates, some functions are inherited and sidebar navigation  enabled for app like usage"
                 },
                 files: [{
                     src: ["."],

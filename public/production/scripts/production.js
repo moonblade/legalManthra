@@ -1,4 +1,4 @@
-var serverUrl = "http://localhost:3000/",
+var serverUrl = "http://63.141.232.148:3000/",
     cases = "cases/"
 angular.module('LegalManthra', ['ngMaterial', 'ui.router', 'googleplus', 'ngStorage'])
     .config(function($stateProvider, $urlRouterProvider, GooglePlusProvider) {
@@ -16,7 +16,13 @@ angular.module('LegalManthra', ['ngMaterial', 'ui.router', 'googleplus', 'ngStor
                 templateUrl: 'modules/detail/detail.html',
                 controller: 'detailController'
             })
-            .state('input', {
+            .state('admin', {
+                url: '/admin',
+                templateUrl: 'modules/admin/admin.html',
+                controller: 'adminController',
+                abstract: true
+            })
+            .state('admin.input', {
                 url: '/input',
                 templateUrl: 'modules/input/input.html',
                 controller: 'inputController'
@@ -104,37 +110,27 @@ angular.module('LegalManthra')
     });
 
 angular.module('LegalManthra')
-    .controller('detailController', ['$scope', '$stateParams', 'mainFactory', function($scope, $stateParams,mainFactory) {
-    	var id = $stateParams.id
-    	mainFactory.getById(id)
-    	.success(function(data){
-    		console.log(data)
-    		if(data.found)
-    		{
-    			$scope.result = data._source;
-    		}
-    	}).error(function(err){
-    		console.log("Error : "+err)
-    		$scope.result = []
-    	})
+    .controller('detailController', ['$scope', '$stateParams', 'mainFactory', function($scope, $stateParams, mainFactory) {
+        var id = $stateParams.id
+        mainFactory.getById(id)
+            .success(function(data) {
+                console.log(data)
+                if (data.found) {
+                    $scope.result = data._source;
+                }
+            }).error(function(err) {
+                console.log("Error : " + err)
+                $scope.result = []
+            })
 
     }]);
 
 angular.module('LegalManthra')
-    .controller('inputController', function($scope, mainFactory, $mdDialog, GooglePlus, $localStorage) {
+    .controller('inputController', function($scope, mainFactory, $mdDialog, $localStorage) {
         $scope.inputTypes = ["case"]
         $scope.selected = "case";
         $scope.commonField = {
             name: "type"
-        }
-        var show = function(title, message) {
-            $mdDialog.show(
-                $mdDialog.alert()
-                .clickOutsideToClose(true)
-                .title(title)
-                .textContent(message)
-                .ok('Okay')
-            );
         }
         $scope.submit = function() {
             var data = {
@@ -143,21 +139,48 @@ angular.module('LegalManthra')
                 postData: $scope.postData
             };
             if (!$localStorage.user) {
-                show("Error", "Please login for upload");
+                $scope.showMessage("Error", "Please login for upload");
             } else if (!$scope.postData) {
-                show("Error", "Please enter data to upload");
+                $scope.showMessage("Error", "Please enter data to upload");
             } else {
                 console.log(data)
                 mainFactory.upload(data)
                     .success(function(data) {
                         console.log(data)
-                        show("Success", "The data has been uploaded successfully")
+                        $scope.showMessage("Success", "The data has been uploaded successfully")
                     }).error(function(err) {
                         console.log(err);
                         message = err ? (err.message || err.message) : "Unknown Error";
-                        show("Failed", 'There was an error during upload : ' + message)
+                        $scope.showMessage("Failed", 'There was an error during upload : ' + message)
                     });
             }
+        }
+
+
+    })
+
+angular.module('LegalManthra')
+    .controller('adminController', ['$scope', '$stateParams', '$state', 'mainFactory', '$mdDialog', '$localStorage', 'GooglePlus', function($scope, $stateParams, $state, mainFactory, $mdDialog, $localStorage, GooglePlus) {
+        $scope.sidebar = [{
+            name: "Input",
+            state: "admin.input"
+        }, {
+            name: "Users",
+            state: "admin.users"
+        }]
+
+        $scope.gotoState = function(state) {
+            $state.go(state);
+        }
+
+        $scope.showMessage = function(title, message) {
+            $mdDialog.show(
+                $mdDialog.alert()
+                .clickOutsideToClose(true)
+                .title(title)
+                .textContent(message)
+                .ok('Okay')
+            );
         }
 
         $scope.loginAction = $localStorage.user ? "Logout" : "Login";
@@ -182,7 +205,7 @@ angular.module('LegalManthra')
                                 $localStorage.user = user;
                             }).error(function(err) {
                                 console.log(err)
-                                show('Failed', 'There was an error during login : ' + (err ? err : "Unknown Error"))
+                                $scope.showMessage('Failed', 'There was an error during login : ' + (err ? err : "Unknown Error"))
                             })
                     });
                 }, function(err) {
@@ -190,7 +213,7 @@ angular.module('LegalManthra')
                 });
             }
         }
-    })
+    }]);
 
 angular.module('LegalManthra')
 
