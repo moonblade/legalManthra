@@ -2,6 +2,7 @@ var elastic = require('../elasticsearch'),
     debug = require('debug')('auth')
 
 exports.admin = function(req, res, next) {
+    debug(req.body)
     unauthorized = function(err) {
         return res.status(401).send({
             "message": "Unauthorized access" + (err ? " - " + err : "")
@@ -14,7 +15,7 @@ exports.admin = function(req, res, next) {
     elastic.getUser(req.body.user, function(err, result) {
         if (err)
             return unauthorized(err);
-        if (result.found && (result._source.role >= constant.admin))
+        if (result.found && (result._source.role >= constant.role.admin))
             return next();
         return unauthorized();
     })
@@ -22,6 +23,7 @@ exports.admin = function(req, res, next) {
 
 
 exports.writer = function(req, res, next) {
+    debug(req.body)
     unauthorized = function(err) {
         return res.status(401).send({
             "message": "Unauthorized access" + (err ? " - " + err : "")
@@ -35,7 +37,7 @@ exports.writer = function(req, res, next) {
     elastic.getUser(req.body.user, function(err, result) {
         if (err)
             return unauthorized(err);
-        if (result.found && (result._source.role >= constant.writer))
+        if (result.found && (result._source.role >= constant.role.writer))
             return next();
         return unauthorized();
     })

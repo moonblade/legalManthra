@@ -1,14 +1,21 @@
 var config = require('./index')
 var indexName = "legal_manthra"
 var constant = {
-    user: 0,
-    writer: 1,
-    admin: 2,
-    version:1,
+    role: {
+        user: 0,
+        writer: 1,
+        admin: 2,
+    },
     indexName: indexName,
-    caseIndex: indexName,
-    caseType: "case",
-    userIndex: indexName,
-    userType: "user",
+    case: {
+        index: indexName,
+        type: "case",
+        version: 1,
+    },
+    user: {
+        index: indexName,
+        type: "user",
+        version: 2,
+    }
 }
 module.exports = constant;

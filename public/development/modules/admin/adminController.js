@@ -52,4 +52,7 @@ angular.module('LegalManthra')
                 });
             }
         }
+    }])
+    .controller('userControlelr', ['$scope', function($scope) {
+        
     }]);

@@ -26,6 +26,11 @@ angular.module('LegalManthra', ['ngMaterial', 'ui.router', 'googleplus', 'ngStor
                 url: '/input',
                 templateUrl: 'modules/input/input.html',
                 controller: 'inputController'
+            })
+            .state('admin.users', {
+                url: '/users',
+                templateUrl: 'modules/admin/users.html',
+                controller: 'userControlelr'
             });
 
         GooglePlusProvider.init({
@@ -213,6 +218,9 @@ angular.module('LegalManthra')
                 });
             }
         }
+    }])
+    .controller('userControlelr', ['$scope', function($scope) {
+        
     }]);
 
 angular.module('LegalManthra')
