@@ -17,6 +17,9 @@
         </md-content>
     </md-sidenav>
     <md-content layout-padding flex="80">
+        <div layout="row" layout-align="end">
+            <md-button class="md-raised md-primary" ng-click="login()">{{loginAction}}</md-button>
+        </div>
         <ui-view/>
     </md-content>
 </section>

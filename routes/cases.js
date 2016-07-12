@@ -10,8 +10,6 @@ var express = require('express'),
 
 require('datejs');
 
-elastic.login("moonblade","moonblade");
-
 router.get('/:input', function(req, res, next) {
     elastic.search(req.params.input).then(function(result) {
         debug(result)
@@ -44,8 +42,8 @@ router.put('/', auth.writer, function(req, res, next) {
         element[commonField.name] = commonField.value;
         bulkBody.push({
             index: {
-                _index: constant.caseIndex,
-                _type: constant.caseType,
+                _index: constant.case.index,
+                _type: constant.case.type,
                 _id: element.id
             }
         })

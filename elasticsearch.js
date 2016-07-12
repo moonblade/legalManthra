@@ -5,7 +5,9 @@ var elasticsearch = require('elasticsearch'),
     elasticClient;
 require('datejs');
 
-exports.client = elasticClient;
+exports.getClient = function() {
+    return elasticClient;
+}
 
 exports.initAnon = function initAnon() {
     elasticClient = new elasticsearch.Client();
@@ -39,6 +41,16 @@ exports.indexExists = function(indexName) {
     });
 }
 
+exports.reindex = function(oldIndex, newIndex) {
+    return elasticClient.reindex({
+        source: {
+            index: oldIndex
+        },
+        dest: {
+            index: newIndex
+        }
+    })
+}
 
 exports.getAlias = function(index, alias) {
     debug(index, alias)
@@ -78,12 +90,12 @@ exports.addCaseBulk = function(bulkBody) {
 }
 
 exports.addUser = function addUser(user) {
-    user.role = constant.user;
+    user.role = constant.role.user;
     debug(user)
     debug(user.id)
     return elasticClient.create({
-        index: constant.userIndex,
-        type: constant.userType,
+        index: constant.user.index,
+        type: constant.user.type,
         id: (user.id || shortId.generate()),
         body: user
     });
@@ -91,19 +103,28 @@ exports.addUser = function addUser(user) {
 
 exports.getUser = function(user, callback) {
     return elasticClient.get({
-        index: constant.userIndex,
-        type: constant.userType,
+        index: constant.user.index,
+        type: constant.user.type,
         id: user.id
     }, callback)
 }
 
+exports.searchUsers = function(body, callback) {
+    return elasticClient.search({
+        index: constant.user.index,
+        type: constant.user.type,
+        body: {
+            body
+        }
+    })
+}
 exports.editUser = function(user, newRole) {
     debug(user)
     debug(newRole)
     user.role = newRole
     return elasticClient.update({
-        index: constant.userIndex,
-        type: constant.userType,
+        index: constant.user.index,
+        type: constant.user.type,
         id: user.id,
         body: {
             doc: user
@@ -113,16 +134,16 @@ exports.editUser = function(user, newRole) {
 
 exports.getCase = function getCase(id, callback) {
     return elasticClient.get({
-        index: constant.caseIndex,
-        type: constant.caseType,
+        index: constant.case.index,
+        type: constant.case.type,
         id: id
     }, callback)
 }
 
 exports.search = function get(input, callback) {
     return elasticClient.search({
-        index: constant.caseIndex,
-        type: constant.caseType,
+        index: constant.case.index,
+        type: constant.case.type,
         analyzer: "english",
         analyzeWildCard: "true",
         body: {
