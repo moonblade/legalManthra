@@ -1,11 +1,18 @@
 angular.module('LegalManthra')
-    .controller('inputController', function($scope, mainFactory, $mdDialog, GooglePlus, $localStorage) {
-        $scope.inputTypes = ["case"]
-        $scope.selected = "case";
-        $scope.commonField = {
-            name: "type"
+    .controller('adminController', ['$scope', '$stateParams', '$state', 'mainFactory', '$mdDialog', '$localStorage', 'GooglePlus', function($scope, $stateParams, $state, mainFactory, $mdDialog, $localStorage, GooglePlus) {
+        $scope.sidebar = [{
+            name: "Input",
+            state: "admin.input"
+        }, {
+            name: "Users",
+            state: "admin.users"
+        }]
+
+        $scope.gotoState = function(state) {
+            $state.go(state);
         }
-        var show = function(title, message) {
+
+        $scope.showMessage = function(title, message) {
             $mdDialog.show(
                 $mdDialog.alert()
                 .clickOutsideToClose(true)
@@ -13,29 +20,6 @@ angular.module('LegalManthra')
                 .textContent(message)
                 .ok('Okay')
             );
-        }
-        $scope.submit = function() {
-            var data = {
-                type: $scope.selected,
-                commonField: $scope.commonField,
-                postData: $scope.postData
-            };
-            if (!$localStorage.user) {
-                show("Error", "Please login for upload");
-            } else if (!$scope.postData) {
-                show("Error", "Please enter data to upload");
-            } else {
-                console.log(data)
-                mainFactory.upload(data)
-                    .success(function(data) {
-                        console.log(data)
-                        show("Success", "The data has been uploaded successfully")
-                    }).error(function(err) {
-                        console.log(err);
-                        message = err ? (err.message || err.message) : "Unknown Error";
-                        show("Failed", 'There was an error during upload : ' + message)
-                    });
-            }
         }
 
         $scope.loginAction = $localStorage.user ? "Logout" : "Login";
@@ -60,7 +44,7 @@ angular.module('LegalManthra')
                                 $localStorage.user = user;
                             }).error(function(err) {
                                 console.log(err)
-                                show('Failed', 'There was an error during login : ' + (err ? err : "Unknown Error"))
+                                $scope.showMessage('Failed', 'There was an error during login : ' + (err ? err : "Unknown Error"))
                             })
                     });
                 }, function(err) {
@@ -68,4 +52,7 @@ angular.module('LegalManthra')
                 });
             }
         }
-    })
+    }])
+    .controller('userControlelr', ['$scope', function($scope) {
+        
+    }]);

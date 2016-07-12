@@ -3,12 +3,14 @@ var should = require('should'),
     request = require('supertest'),
     winston = require('winston'),
     debug = require('debug')('test'),
-    constant = require('../config/constants')
+    constant = require('../config/constants'),
+    sample = require('./sample.js')
 config = require('../config');
 
 input = {
     search: "my test",
     detail: "testinput",
+    detailBig: "testInputBig",
     login: {
         "user": {
             id: "101130645015448847110",
@@ -34,8 +36,22 @@ input = {
     },
     putData: {
         "type": "type",
-        "commonField": "test Input",
+        "commonField": {
+            "name": "test Input",
+            "value": "test"
+        },
         "postData": "[{\"id\": \"testinput\",\"title\":\"my test\"}]",
+        "user": {
+            "id": "101130645015448847110"
+        }
+    },
+    putDataBig: {
+        "type": "type",
+        "commonField": {
+            "name": "test Input",
+            "value": "test"
+        },
+        "postData": JSON.stringify(sample),
         "user": {
             "id": "101130645015448847110"
         }
@@ -85,6 +101,19 @@ describe('Routing', function() {
                 })
         })
 
+        it('puts bigger data', function(done) {
+            request(caseUrl)
+                .put("")
+                .send(input.putDataBig)
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end(function(err, res) {
+                    if (err)
+                        return done(err)
+                    done();
+                })
+        })
+
         it('changes user to normal user', function(done) {
             request(url)
                 .post("/edituser")
@@ -109,7 +138,8 @@ describe('Routing', function() {
                 .end(function(err, res) {
                     if (err)
                         return done(err);
-                    res.body.should.have.property('hits')
+                    res.body.should.have.property('hits');
+                    (res.body.hits.total).should.be.above(0)
                     done();
                 })
         })
@@ -120,6 +150,21 @@ describe('Routing', function() {
             debug(caseUrl + "display/" + input.detail)
             request(caseUrl)
                 .get("display/" + input.detail)
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end(function(err, res) {
+                    if (err)
+                        return done(err);
+                    res.body.should.have.property('_id')
+                    res.body.should.have.property('_source')
+                    done()
+                })
+        })
+
+        it('correctly gets bigger details from id', function(done) {
+            debug(caseUrl + "display/" + input.detail)
+            request(caseUrl)
+                .get("display/" + input.detailBig)
                 .expect('Content-Type', /json/)
                 .expect(200)
                 .end(function(err, res) {

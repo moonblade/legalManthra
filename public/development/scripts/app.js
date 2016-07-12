@@ -1,5 +1,4 @@
 var serverUrl = "http://63.141.232.148:3000/",
-    // serverUrl = "http://localhost:3000/",
     cases = "cases/"
 angular.module('LegalManthra', ['ngMaterial', 'ui.router', 'googleplus', 'ngStorage'])
     .config(function($stateProvider, $urlRouterProvider, GooglePlusProvider) {
@@ -17,10 +16,21 @@ angular.module('LegalManthra', ['ngMaterial', 'ui.router', 'googleplus', 'ngStor
                 templateUrl: 'modules/detail/detail.html',
                 controller: 'detailController'
             })
-            .state('input', {
+            .state('admin', {
+                url: '/admin',
+                templateUrl: 'modules/admin/admin.html',
+                controller: 'adminController',
+                abstract: true
+            })
+            .state('admin.input', {
                 url: '/input',
                 templateUrl: 'modules/input/input.html',
                 controller: 'inputController'
+            })
+            .state('admin.users', {
+                url: '/users',
+                templateUrl: 'modules/admin/users.html',
+                controller: 'userControlelr'
             });
 
         GooglePlusProvider.init({
